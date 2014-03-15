@@ -3,12 +3,19 @@ from random import randint
 
 from time import sleep
 
+import sys
+
 class Life(object):
 
-	def __init__(self, m, n):
+	def __init__(self, m, n, seed=None):
 		self.num_rows = m
 		self.num_cols = n
-		self.game_board = [[randint(0,1) for j in range(n)] for i in range(m)]
+
+		if seed=='glidergun':
+			self.game_board = self.glider_board()
+		else:
+			self.game_board = [[randint(0,1) for j in range(n)] for i in range(m)]
+
 		self.current_time = 0
 
 	def __str__(self):
@@ -23,6 +30,63 @@ class Life(object):
 			out_string += '\n'
 
 		return out_string
+
+	def glider_board(self):
+
+		n = self.num_cols
+		m = self.num_rows
+
+		board =  [[0 for j in range(n)] for i in range(m)]
+
+		#left block
+		board[5][1] = 1
+		board[5][2] = 1
+		board[6][1] = 1
+		board[6][2] = 1
+
+		#middle circle
+		board[3][13] = 1
+		board[3][14] = 1
+		board[4][12] = 1
+		board[4][16] = 1
+
+		board[5][11] = 1
+		board[5][17] = 1
+		board[6][11] = 1
+		board[6][15] = 1
+		board[6][17] = 1
+		board[6][18] = 1
+		board[7][11] = 1
+		board[7][17] = 1
+
+		board[8][12] = 1
+		board[8][16] = 1
+		board[9][13] = 1
+		board[9][14] = 1
+
+		#middle v
+		board[1][25] = 1
+		board[2][23] = 1
+		board[2][25] = 1
+
+		board[3][21] = 1
+		board[3][22] = 1
+		board[4][21] = 1
+		board[4][22] = 1
+		board[5][21] = 1
+		board[5][22] = 1
+
+		board[6][23] = 1
+		board[6][25] = 1
+		board[7][25] = 1
+
+		#right block
+		board[3][35] = 1
+		board[3][36] = 1
+		board[4][35] = 1
+		board[4][36] = 1
+
+		return board
 
 	def run_game(self, time_steps):
 		self.render_state()
@@ -84,12 +148,13 @@ class Life(object):
 		print self
 
 
-def main():
+def main(argv):
+	test_board = Life(40,100,'glidergun')
+	test_board.run_game(int(argv[1]))
+
 	test_board = Life(40,100)
+	test_board.run_game(int(argv[1]))
 
-	test_board.game_board[1][1] = 1
-
-	test_board.run_game(1000)
 
 if __name__=="__main__":
-	main()
+	main(sys.argv)
