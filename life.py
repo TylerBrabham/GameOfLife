@@ -14,7 +14,7 @@ class Life(object):
 	def __str__(self):
 		out_string = ''
 
-		string_map = {0:'0', 1:'*'}
+		string_map = {0:' ', 1:'O'}
 
 		for i, row in enumerate(self.game_board):
 			row_str = [string_map[elm] for elm in row]
