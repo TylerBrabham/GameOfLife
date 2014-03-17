@@ -1,5 +1,5 @@
 
-from random import randint
+from random import randint, random
 
 from time import sleep
 
@@ -13,6 +13,8 @@ class Life(object):
 
 		if seed=='glidergun':
 			self.game_board = self.glider_board()
+		elif seed=='checker':
+			self.game_board = self.checker_board()
 		else:
 			self.game_board = [[randint(0,1) for j in range(n)] for i in range(m)]
 
@@ -30,6 +32,89 @@ class Life(object):
 			out_string += '\n'
 
 		return out_string
+
+
+
+	def run_game(self, time_steps):
+		self.render_state()
+
+		while self.current_time<time_steps:
+			sleep(.1)
+
+			self.update_state()
+			self.render_state()
+
+	def update_state(self):
+		old_board = self.game_board
+		new_board = [[0 for j in range(self.num_cols)] for i in range(self.num_rows)]
+
+		for i in range(self.num_rows):
+			for j in range(self.num_cols):
+
+				num_neighbors = self.calculate_neighbors(i,j)
+
+				rand_val = random()
+				if old_board[i][j]==1:
+
+					if num_neighbors<2:
+						new_board[i][j] = 0
+
+					elif num_neighbors<4:
+						new_board[i][j] = 1
+
+					else:
+						new_board[i][j] = 0
+
+				else:
+					if num_neighbors==3:
+						new_board[i][j] = 1
+
+
+
+		self.game_board = new_board
+		self.current_time += 1
+
+	def calculate_neighbors(self,i,j):
+		m = self.num_rows
+		n = self.num_cols
+
+		num_neighbors = 0
+
+		for k in range(i-1,i+2):
+			if k<0 or k>m-1:
+				continue
+
+			for l in range(j-1,j+2):
+				if k==i and l==j:
+					continue
+
+				if l<0 or l>n-1:
+					continue
+
+				num_neighbors += self.game_board[k][l]
+
+		return num_neighbors
+
+	def render_state(self):
+		print self
+
+	def checker_board(self):
+		n = self.num_cols
+		m = self.num_rows
+
+		board =  [[0 for j in range(n)] for i in range(m)]
+
+		for i in range(0, m):
+			if i%2==0:
+				for j in range(0,n,2):
+					board[i][j] = 1
+			else:
+				for j in range(1,n,2):
+					board[i][j] = 1
+
+
+		return board
+
 
 	def glider_board(self):
 
@@ -88,71 +173,12 @@ class Life(object):
 
 		return board
 
-	def run_game(self, time_steps):
-		self.render_state()
-
-		while self.current_time<time_steps:
-			sleep(.1)
-
-			self.update_state()
-			self.render_state()
-
-	def update_state(self):
-		old_board = self.game_board
-		new_board = [[0 for j in range(self.num_cols)] for i in range(self.num_rows)]
-
-		for i in range(self.num_rows):
-			for j in range(self.num_cols):
-
-				num_neighbors = self.calculate_neighbors(i,j)
-
-				if old_board[i][j]==1:
-					if num_neighbors<2:
-						new_board[i][j] = 0
-
-					elif num_neighbors<4:
-						new_board[i][j] = 1
-
-					else:
-						new_board[i][j] = 0
-
-				else:
-					if num_neighbors==3:
-						new_board[i][j] = 1
-
-		self.game_board = new_board
-		self.current_time += 1
-
-	def calculate_neighbors(self,i,j):
-		m = self.num_rows
-		n = self.num_cols
-
-		num_neighbors = 0
-
-		for k in range(i-1,i+2):
-			if k<0 or k>m-1:
-				continue
-
-			for l in range(j-1,j+2):
-				if k==i and l==j:
-					continue
-
-				if l<0 or l>n-1:
-					continue
-
-				num_neighbors += self.game_board[k][l]
-
-		return num_neighbors
-
-	def render_state(self):
-		print self
-
 
 def main(argv):
-	test_board = Life(40,100,'glidergun')
-	test_board.run_game(int(argv[1]))
+	# test_board = Life(40,100,'glidergun')
+	# test_board.run_game(int(argv[1]))
 
-	test_board = Life(40,100)
+	test_board = Life(int(argv[2]),int(argv[3]), seed=argv[4])
 	test_board.run_game(int(argv[1]))
 
 
